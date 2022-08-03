@@ -23,10 +23,10 @@ type DeploymentOptions struct {
 var (
 	deploymentsExample = `
 # Get deployment stats for a project
-octostats deployments --project 'Etrm.Til.FileSystemConnector --environment "Etrm Production"'
+octostats deployments --project 'Etrm.Til.FileSystemConnector' --environment 'Etrm Production'
 
 # Get deployment stats for all projects in a project group
-octostats deployments --projectgroup 'Etrm.Integration'`
+octostats deployments --projectgroup 'Etrm.Integration' --environment 'Etrm Production'`
 	environmentId string
 )
 
@@ -103,6 +103,8 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 	fmt.Printf("Number of releases in the past %v days: %v\n", o.Lookback, count)
 }
 
+// event strategy
+
 // func (o *DeploymentOptions) GetProjectGroupReleases() {
 // 	projectGroups, _ := o.Client.ProjectGroups.Get(od.ProjectGroupsQuery{PartialName: o.ProjectGroup})
 // 	if len(projectGroups.Items) > 1 {
@@ -126,3 +128,9 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 // 		e.Details
 // 	}
 // }
+
+func (o *DeploymentOptions) GetProjectGroupReleases() {
+	o.Client.Projects.Get(&od.ProjectsQuery{})
+
+	od.ProjectGroup
+}
