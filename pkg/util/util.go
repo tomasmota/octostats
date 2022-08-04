@@ -6,9 +6,25 @@ import (
 	"net/url"
 
 	od "github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/client"
+	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/projectgroups"
 	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/projects"
 	"github.com/spf13/viper"
 )
+
+func GetProjectGroupByName(client od.Client, name string) (*projectgroups.ProjectGroup, error) {
+	projectGroups, err := client.ProjectGroups.GetByPartialName(name)
+	if err != nil {
+		log.Fatalln(fmt.Errorf("error fetching project group: %s", name))
+	}
+
+	for _, p := range projectGroups {
+		if p.Name == name {
+			return p, nil
+		}
+	}
+
+	return nil, fmt.Errorf("project group '%s' could not be found, please check that it matches the project name exactly", name)
+}
 
 func GetProjectByName(client *od.Client, project string) (*projects.Project, error) {
 	ps, err := client.Projects.Get(projects.ProjectsQuery{Name: project})

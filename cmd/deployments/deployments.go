@@ -7,7 +7,6 @@ import (
 
 	od "github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/client"
 	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/projects"
-	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/releases"
 	"github.com/spf13/cobra"
 	"n8m.io/octostats/pkg/environment"
 	"n8m.io/octostats/pkg/util"
@@ -61,7 +60,6 @@ func (o *DeploymentOptions) init() {
 }
 
 func (o *DeploymentOptions) ShowDeploymentStats() {
-	var releases []*releases.Release
 	var projects []*projects.Project
 	if o.Project != "" {
 		project, err := util.GetProjectByName(o.Client, o.Project)
@@ -71,13 +69,10 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 		projects = append(projects, project)
 
 	} else if o.ProjectGroup != "" {
-		projectGroups, err := o.Client.ProjectGroups.GetByPartialName(o.ProjectGroup)
+		pg, err := util.GetProjectGroupByName(*o.Client, o.ProjectGroup)
 		if err != nil {
-			log.Fatalln(fmt.Errorf("error fetching project group: %s", o.ProjectGroup))
-		} else if len(projectGroups) > 1 {
-			log.Fatalln(fmt.Errorf("found more than one project group matching: %s", o.Environment))
+			log.Fatalln(fmt.Errorf("error getting project group: %s", o.ProjectGroup))
 		}
-		pg := projectGroups[0]
 
 		ps, err := o.Client.ProjectGroups.GetProjects(pg)
 		if err != nil {
@@ -86,25 +81,23 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 		projects = append(projects, ps...)
 	}
 
+	count := 0
 	for _, project := range projects {
-		fmt.Println("Looking at project: " + project.Name)
-		rs, err := o.Client.Projects.GetReleases(project)
+		releases, err := o.Client.Projects.GetReleases(project)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("error fetching releases for project: %s", o.Project))
 		}
-		releases = append(releases, rs...)
-	}
 
-	count := 0
-	for _, r := range releases {
-		deployments, err := o.Client.Deployments.GetDeployments(r)
-		if err != nil {
-			log.Fatalln(fmt.Errorf("error getting deployments for release: %s", r.ID))
-		}
-		for _, d := range deployments.Items {
-			if environmentId == d.EnvironmentID && d.Created.After(time.Now().AddDate(0, 0, 0-o.Lookback)) {
-				count++
-				break
+		for _, release := range releases {
+			deployments, err := o.Client.Deployments.GetDeployments(release)
+			if err != nil {
+				log.Fatalln(fmt.Errorf("error getting deployments for release: %s", release.ID))
+			}
+			for _, d := range deployments.Items {
+				if environmentId == d.EnvironmentID && d.Created.After(time.Now().AddDate(0, 0, 0-o.Lookback)) {
+					count++
+					break
+				}
 			}
 		}
 	}
