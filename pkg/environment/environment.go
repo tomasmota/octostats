@@ -5,7 +5,7 @@ import (
 	"log"
 	"path/filepath"
 
-	od "github.com/OctopusDeploy/go-octopusdeploy/octopusdeploy"
+	od "github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/client"
 )
 
 func GetEnvironmentIDs(client *od.Client, blob string) ([]string, error) {
@@ -28,4 +28,16 @@ func GetEnvironmentIDs(client *od.Client, blob string) ([]string, error) {
 	}
 
 	return matches, nil
+}
+
+func GetEnvironmentID(client *od.Client, environmentName string) string {
+	ids, err := GetEnvironmentIDs(client, environmentName)
+	if err != nil {
+		log.Fatalln(fmt.Errorf("error fetching ID for environment: %s", environmentName))
+	} else if len(ids) == 0 {
+		log.Fatalln(fmt.Errorf("no environment found matching: %s", environmentName))
+	} else if len(ids) > 1 {
+		log.Fatalln(fmt.Errorf("found more than one environment matching: %s", environmentName))
+	}
+	return ids[0]
 }

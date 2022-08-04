@@ -5,7 +5,9 @@ import (
 	"log"
 	"time"
 
-	od "github.com/OctopusDeploy/go-octopusdeploy/octopusdeploy"
+	od "github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/client"
+	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/projects"
+	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/releases"
 	"github.com/spf13/cobra"
 	"n8m.io/octostats/pkg/environment"
 	"n8m.io/octostats/pkg/util"
@@ -55,35 +57,42 @@ func NewDeploymentsCmd() *cobra.Command {
 }
 
 func (o *DeploymentOptions) init() {
-	ids, err := environment.GetEnvironmentIDs(o.Client, o.Environment)
-	if err != nil {
-		log.Fatalln(fmt.Errorf("error fetching ID for environment: %s", o.Environment))
-	} else if len(ids) > 1 {
-		log.Fatalln(fmt.Errorf("found more than one environment matching: %s", o.Environment))
-	}
-	environmentId = ids[0]
+	environmentId = environment.GetEnvironmentID(o.Client, o.Environment)
 }
 
 func (o *DeploymentOptions) ShowDeploymentStats() {
-	var releases []*od.Release
+	var releases []*releases.Release
+	var projects []*projects.Project
 	if o.Project != "" {
 		project, err := util.GetProjectByName(o.Client, o.Project)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("error fetching project: %s", o.Project))
 		}
+		projects = append(projects, project)
 
-		releases, err = o.Client.Projects.GetReleases(project)
+	} else if o.ProjectGroup != "" {
+		projectGroups, err := o.Client.ProjectGroups.GetByPartialName(o.ProjectGroup)
+		if err != nil {
+			log.Fatalln(fmt.Errorf("error fetching project group: %s", o.ProjectGroup))
+		} else if len(projectGroups) > 1 {
+			log.Fatalln(fmt.Errorf("found more than one project group matching: %s", o.Environment))
+		}
+		pg := projectGroups[0]
+
+		ps, err := o.Client.ProjectGroups.GetProjects(pg)
+		if err != nil {
+			log.Fatalln(fmt.Errorf("error getting project in project group: %s", pg.Name))
+		}
+		projects = append(projects, ps...)
+	}
+
+	for _, project := range projects {
+		fmt.Println("Looking at project: " + project.Name)
+		rs, err := o.Client.Projects.GetReleases(project)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("error fetching releases for project: %s", o.Project))
 		}
-
-	} else if o.ProjectGroup != "" {
-		// projectGroups, err := o.Client.ProjectGroups.GetByPartialName(o.ProjectGroup)
-		// if err != nil {
-		// 	log.Fatalln(fmt.Errorf("error fetching project group: %s", o.ProjectGroup))
-		// }
-
-		// TODO: Get all releases in project group, no easy way so far
+		releases = append(releases, rs...)
 	}
 
 	count := 0
@@ -101,36 +110,4 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 	}
 
 	fmt.Printf("Number of releases in the past %v days: %v\n", o.Lookback, count)
-}
-
-// event strategy
-
-// func (o *DeploymentOptions) GetProjectGroupReleases() {
-// 	projectGroups, _ := o.Client.ProjectGroups.Get(od.ProjectGroupsQuery{PartialName: o.ProjectGroup})
-// 	if len(projectGroups.Items) > 1 {
-// 		log.Fatalln(fmt.Errorf("got more than one project group matching pattern"))
-// 	}
-
-// 	query := od.EventsQuery{
-// 		ProjectGroups:   []string{projectGroups.Items[0].ID},
-// 		EventCategories: []string{"DeploymentStarted"},
-// 	}
-
-// 	events, err := o.Client.Events.Get(query)
-// 	if err != nil {
-// 		log.Fatalln(fmt.Errorf("error getting events for project group: %s", o.ProjectGroup))
-// 	}
-// 	if len(events.Items) == 0 {
-// 		fmt.Println("no events")
-// 	}
-// 	for _, e := range events.Items {
-// 		fmt.Printf("%v, %v\n", e.Category, e.Occurred.Format("02-01-2006"))
-// 		e.Details
-// 	}
-// }
-
-func (o *DeploymentOptions) GetProjectGroupReleases() {
-	o.Client.Projects.Get(&od.ProjectsQuery{})
-
-	od.ProjectGroup
 }

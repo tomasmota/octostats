@@ -5,12 +5,13 @@ import (
 	"log"
 	"net/url"
 
-	od "github.com/OctopusDeploy/go-octopusdeploy/octopusdeploy"
+	od "github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/client"
+	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/projects"
 	"github.com/spf13/viper"
 )
 
-func GetProjectByName(client *od.Client, project string) (*od.Project, error) {
-	ps, err := client.Projects.Get(od.ProjectsQuery{Name: project})
+func GetProjectByName(client *od.Client, project string) (*projects.Project, error) {
+	ps, err := client.Projects.Get(projects.ProjectsQuery{Name: project})
 	if err != nil {
 		return nil, fmt.Errorf("an error occured while fetching project '%s': %w", project, err)
 	}
