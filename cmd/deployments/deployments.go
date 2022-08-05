@@ -56,7 +56,9 @@ func NewDeploymentsCmd() *cobra.Command {
 }
 
 func (o *DeploymentOptions) init() {
-	environmentId = environment.GetEnvironmentID(o.Client, o.Environment)
+	if o.Environment != "" { // only calculate the environment is not empty
+		environmentId = environment.GetEnvironmentID(o.Client, o.Environment)
+	}
 }
 
 func (o *DeploymentOptions) ShowDeploymentStats() {
@@ -83,6 +85,7 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 
 	count := 0
 	for _, project := range projects {
+		fmt.Printf("project: %v\n", project.Name)
 		releases, err := o.Client.Projects.GetReleases(project)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("error fetching releases for project: %s", o.Project))
@@ -94,13 +97,20 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 				log.Fatalln(fmt.Errorf("error getting deployments for release: %s", release.ID))
 			}
 			for _, d := range deployments.Items {
-				if environmentId == d.EnvironmentID && d.Created.After(time.Now().AddDate(0, 0, 0-o.Lookback)) {
-					count++
-					break
+				if environmentId == "" || environmentId == d.EnvironmentID {
+					if d.Created.After(time.Now().AddDate(0, 0, 0-o.Lookback)) {
+						fmt.Println("  " + release.Version)
+						count++
+						break
+					}
 				}
 			}
 		}
 	}
 
-	fmt.Printf("Number of releases in the past %v days: %v\n", o.Lookback, count)
+	if o.Environment != "" {
+		fmt.Printf("\nNumber of releases to '%v' in the past %v days: %v\n", o.Environment, o.Lookback, count)
+	} else {
+		fmt.Printf("\nNumber of releases across all environments in the past %v days: %v\n", o.Lookback, count)
+	}
 }
