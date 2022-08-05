@@ -85,13 +85,14 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 
 	count := 0
 	for _, project := range projects {
-		fmt.Printf("project: %v\n", project.Name)
+		pCount := 0
 		releases, err := o.Client.Projects.GetReleases(project)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("error fetching releases for project: %s", o.Project))
 		}
 
-		for _, release := range releases {
+		for i := len(releases) - 1; i >= 0; i-- { // start with the earliest release
+			release := releases[i]
 			deployments, err := o.Client.Deployments.GetDeployments(release)
 			if err != nil {
 				log.Fatalln(fmt.Errorf("error getting deployments for release: %s", release.ID))
@@ -99,18 +100,18 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 			for _, d := range deployments.Items {
 				if environmentId == "" || environmentId == d.EnvironmentID {
 					if d.Created.After(time.Now().AddDate(0, 0, 0-o.Lookback)) {
-						fmt.Println("  " + release.Version)
-						count++
+						if pCount == 0 {
+							fmt.Println(project.Name) // print project name on first valid release found
+						}
+						fmt.Printf("	%v: %v\n", d.Created.Format("02/01"), release.Version)
+						pCount++
 						break
 					}
 				}
 			}
 		}
+		count += pCount
 	}
 
-	if o.Environment != "" {
-		fmt.Printf("\nNumber of releases to '%v' in the past %v days: %v\n", o.Environment, o.Lookback, count)
-	} else {
-		fmt.Printf("\nNumber of releases across all environments in the past %v days: %v\n", o.Lookback, count)
-	}
+	fmt.Printf("Number of releases in the past %v days: %v\n", o.Lookback, count)
 }

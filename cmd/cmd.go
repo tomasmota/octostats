@@ -21,11 +21,9 @@ func Execute() {
 
 	cmd.PersistentFlags().String("apikey", os.Getenv("OCTOPUS_API_KEY"), "Octopus Deploy API Key")
 	cmd.PersistentFlags().String("url", "http://octopus.dac.local", "Octopus Deploy Server Endpoint")
-	cmd.PersistentFlags().String("format", "text", "Octopus Deploy Server Endpoint")
 
 	viper.BindPFlag("apikey", cmd.PersistentFlags().Lookup("apikey"))
 	viper.BindPFlag("url", cmd.PersistentFlags().Lookup("url"))
-	viper.BindPFlag("format", cmd.PersistentFlags().Lookup("format"))
 
 	cmd.AddCommand(deployments.NewDeploymentsCmd())
 
