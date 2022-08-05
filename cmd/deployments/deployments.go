@@ -3,10 +3,11 @@ package deployments
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"time"
 
 	od "github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/client"
-	"github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/projects"
+	p "github.com/OctopusDeploy/go-octopusdeploy/v2/pkg/projects"
 	"github.com/spf13/cobra"
 	"n8m.io/octostats/pkg/environment"
 	"n8m.io/octostats/pkg/util"
@@ -44,6 +45,7 @@ func NewDeploymentsCmd() *cobra.Command {
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			o.ShowDeploymentStats()
+			// fmt.Println(contains([]*p.Project{{Name: "bla"}}, &p.Project{Name: "bla"}))
 		},
 	}
 
@@ -62,15 +64,9 @@ func (o *DeploymentOptions) init() {
 }
 
 func (o *DeploymentOptions) ShowDeploymentStats() {
-	var projects []*projects.Project
-	if o.Project != "" {
-		project, err := util.GetProjectByName(o.Client, o.Project)
-		if err != nil {
-			log.Fatalln(fmt.Errorf("error fetching project: %s", o.Project))
-		}
-		projects = append(projects, project)
+	var projects []*p.Project
 
-	} else if o.ProjectGroup != "" {
+	if o.ProjectGroup != "" {
 		pg, err := util.GetProjectGroupByName(*o.Client, o.ProjectGroup)
 		if err != nil {
 			log.Fatalln(fmt.Errorf("error getting project group: %s", o.ProjectGroup))
@@ -81,6 +77,16 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 			log.Fatalln(fmt.Errorf("error getting project in project group: %s", pg.Name))
 		}
 		projects = append(projects, ps...)
+	}
+
+	if o.Project != "" {
+		project, err := util.GetProjectByName(o.Client, o.Project)
+		if err != nil {
+			log.Fatalln(fmt.Errorf("error fetching project: %s", o.Project))
+		}
+		if !contains(projects, project) {
+			projects = append(projects, project)
+		}
 	}
 
 	count := 0
@@ -114,4 +120,15 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 	}
 
 	fmt.Printf("Number of releases in the past %v days: %v\n", o.Lookback, count)
+}
+
+func contains[T comparable](elems []T, v T) bool {
+	// fmt.Println(v)
+	for _, s := range elems {
+		// fmt.Println(s)
+		if reflect.DeepEqual(s, v) {
+			return true
+		}
+	}
+	return false
 }
