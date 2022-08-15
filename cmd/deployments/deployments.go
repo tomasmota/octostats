@@ -45,7 +45,6 @@ func NewDeploymentsCmd() *cobra.Command {
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			o.ShowDeploymentStats()
-			// fmt.Println(contains([]*p.Project{{Name: "bla"}}, &p.Project{Name: "bla"}))
 		},
 	}
 
@@ -123,9 +122,7 @@ func (o *DeploymentOptions) ShowDeploymentStats() {
 }
 
 func contains[T comparable](elems []T, v T) bool {
-	// fmt.Println(v)
 	for _, s := range elems {
-		// fmt.Println(s)
 		if reflect.DeepEqual(s, v) {
 			return true
 		}
