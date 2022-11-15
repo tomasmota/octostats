@@ -39,8 +39,8 @@ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/MakeNowJust/heredoc/v2 v2.0.1 h1:rlCHh70XXXv7toz95ajQWOWQnN4WNLt0TdpZYIR/J6A=
-github.com/OctopusDeploy/go-octopusdeploy/v2 v2.12.0 h1:1THFtuXmZ4g15ZEn4z62OyNfWHIhoT0RCvKkRQ4mF5U=
-github.com/OctopusDeploy/go-octopusdeploy/v2 v2.12.0/go.mod h1:2j9rwRfb5qUs9PEJ3W331W84kRaNge5bed4D7JR1ruU=
+github.com/OctopusDeploy/go-octopusdeploy/v2 v2.15.0 h1:8R5q30r9oGJKclKbXDZdWHjyZdosYjqKQsiSaK6E9L8=
+github.com/OctopusDeploy/go-octopusdeploy/v2 v2.15.0/go.mod h1:2j9rwRfb5qUs9PEJ3W331W84kRaNge5bed4D7JR1ruU=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
