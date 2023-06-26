@@ -3,7 +3,7 @@ module n8m.io/octostats
 go 1.19
 
 require (
-	github.com/OctopusDeploy/go-octopusdeploy/v2 v2.26.0
+	github.com/OctopusDeploy/go-octopusdeploy/v2 v2.27.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.16.0
 )
