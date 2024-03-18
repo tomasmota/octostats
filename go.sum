@@ -1,6 +1,6 @@
 github.com/MakeNowJust/heredoc/v2 v2.0.1 h1:rlCHh70XXXv7toz95ajQWOWQnN4WNLt0TdpZYIR/J6A=
-github.com/OctopusDeploy/go-octopusdeploy/v2 v2.40.0 h1:0Q3Vfbuza9GysMjQk56WphA3Lu2Kw/A/T6suJ78RMec=
-github.com/OctopusDeploy/go-octopusdeploy/v2 v2.40.0/go.mod h1:GZmFu6LmN8Yg0tEoZx3ytk9FnaH+84cWm7u5TdWZC6E=
+github.com/OctopusDeploy/go-octopusdeploy/v2 v2.40.2 h1:gdNtnSV75JIguS5z/gb215C0cJVGjQ1rRcjATv54PpY=
+github.com/OctopusDeploy/go-octopusdeploy/v2 v2.40.2/go.mod h1:GZmFu6LmN8Yg0tEoZx3ytk9FnaH+84cWm7u5TdWZC6E=
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
