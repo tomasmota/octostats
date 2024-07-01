@@ -3,12 +3,13 @@ module n8m.io/octostats
 go 1.19
 
 require (
-	github.com/OctopusDeploy/go-octopusdeploy/v2 v2.43.0
+	github.com/OctopusDeploy/go-octopusdeploy/v2 v2.45.0
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.18.2
 )
 
 require (
+	github.com/OctopusDeploy/go-octodiff v1.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dghubble/sling v1.4.1 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
